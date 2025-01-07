@@ -2,6 +2,16 @@ let form = document.querySelector('form');
 let input = document.querySelector('input');
 let todos = document.querySelector('.todos');
 
+
+document.addEventListener('DOMContentLoaded', () => {
+    const storedTodos = JSON.parse(localStorage.getItem('todos')) || [];
+    storedTodos.forEach(todoText => {
+        todos.appendChild(getTodo(todoText));
+    })
+})
+
+
+
 function getTodo(value) {
     let todo = document.createElement('div');
     let textEl = document.createElement('span');
@@ -15,8 +25,9 @@ function getTodo(value) {
     closeEl.classList.add('delete');
 
 
-    closeEl.addEventListener('click', (e) => {
+    closeEl.addEventListener('click', () => {
         todos.removeChild(todo);
+        saveTodos();
     });
 
 
@@ -34,5 +45,14 @@ form.addEventListener('submit', (e) => {
     if(!value) return;
 
     todos.appendChild(getTodo(value));
+    saveTodos();
+
     input.value = '';
 });
+
+
+function saveTodos() {
+    const todoTextList =  Array.from(todos.querySelectorAll('.todo span:first-child'))
+            .map(span => span.innerHTML);
+    localStorage.setItem('todos', JSON.stringify(todoTextList));
+}
